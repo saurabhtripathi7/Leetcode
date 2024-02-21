@@ -1,29 +1,23 @@
 class Solution {
 public:
-    int pivotIndex(vector<int>& nums) {
-        int n=nums.size();
-        int ans=-1;
-        int index;
+    int prefixSumApproach(vector<int>&nums){
+        vector<int>lsum(nums.size(), 0);   //creating a vector of size equal to size of nums and all init value as 0
+        vector<int>rsum(nums.size(), 0);
 
-        for(index=0; index<n; index++)
-        {
-            int leftSum=0;
-            int rightSum=0;
-            for(int left=0; left<index; left++)
-            {
-                leftSum+=nums[left];
-            }
-            for(int right=n-1; right>index; right--)
-            {
-                rightSum+=nums[right];
-            }
-            if(leftSum==rightSum)
-            {
-                ans=index;
-                break;
-            }
-            
+        for(int i = 1 ; i < nums.size(); i++){
+            lsum[i] = nums[i-1] + lsum[i-1];
         }
-        return ans;
+        for(int j = nums.size() - 2; j >= 0; j-- ){
+            rsum[j] = nums[j+1] + rsum[j+1];
+        }
+        for(int i = 0; i < nums.size(); i++){
+            if (lsum[i] == rsum[i]){
+                return i;
+            }
+        }
+        return -1;
+    }
+    int pivotIndex(vector<int>& nums) {
+        return prefixSumApproach(nums);
     }
 };
