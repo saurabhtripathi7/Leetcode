@@ -1,54 +1,38 @@
 class Solution {
 public:
-    int binarySearch(vector<int>& arr, int s, int e, int target){
-        
-        while(s <= e){
-            int mid = s + (e-s)/2;
-            if(arr[mid] == target) 
-                return mid;
-            else if (target > arr[mid]) {
-                s = mid+1;
-            }
-            else {
-                e = mid-1;
-            }
-        }
-        return -1;
-    }
-    int pivotIndex(vector<int>& arr){
-        int s = 0;
-        int n = arr.size();
-        int e = n-1;
-        
-        while (s <= e){
-            int mid = s + (e-s)/2;
-            if (s == e) return 0;            
-            else if (mid + 1 < n && arr[mid] > arr[mid + 1])
-                return mid;
-            else if (mid - 1 >= 0 && arr[mid - 1] > arr[mid]) 
-                return mid-1;
-            else if ( arr[s] <= arr[mid] ){
-                s = mid+1;
-            }
-            else{
-                e = mid-1;
-            }
-        }
-    return -1;
-
-    }
-
     int search(vector<int>& nums, int target) {
-        int pivot= pivotIndex(nums);
-        int ans = -1;
-        if(target >= nums[0] && target <= nums[pivot]){
-            ans = binarySearch(nums, 0, pivot, target);
+      int n = nums.size();
+      int s = 0;
+      int e = n-1;
+      while (s <= e)
+      {
+        int mid = s + (e-s)/2;
+        if (nums[mid] == target){
+            return mid;
         }
-        else{
-            ans = binarySearch(nums, pivot+1, nums.size()-1, target);
+        // in this approach, we'll not apply BS on whole array, instead we'll trim down the search scope for Bin Search
+        // if left part is sorted
+        if (nums[s] <= nums[mid]){
+            if(nums[s] <= target && target <= nums[mid]){
+                // means element exists in left part
+                e = mid-1;              // left shifting
+            }
+            else { //when element is not present in left sorted part
+                s = mid+1;      // it might be in the right part,  therefore right shifting 
+            }
         }
-        return ans;
+        else{ //if right part is sorted
+            if (nums[mid] <= target && target <= nums[e]){
+                // element is in right half
+                s = mid+1;
+            }
+            else { // not in right half
+                e = mid-1;
+                
+            }
+        }
 
-
+      }  
+      return -1;
     }
 };
