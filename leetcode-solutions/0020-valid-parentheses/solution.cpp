@@ -1,38 +1,39 @@
 class Solution {
 public:
     bool isValid(string s) {
-        // Create a stack to keep track of opening brackets
-        stack<char> s1;
+    // Create a stack to store opening brackets
+    stack<char> st; 
 
-        // Iterate over each character in the string
-        for(auto ch : s) {
-            // If the character is an opening bracket, push it onto the stack
-            if(ch == '(' || ch == '{' || ch == '[') {
-                s1.push(ch);
-            } 
-            // If the character is a closing bracket
-            else if(ch == ')' || ch == '}' || ch == ']') {
-                // If the stack is empty, it means there are more closing brackets than opening brackets
-                if(s1.empty()) return false;
-                
-                // Get the top element of the stack
-                char top = s1.top();
-                
-                // Check if the top element of the stack matches the corresponding opening bracket
-                if((ch == ')' && top == '(') ||
-                   (ch == '}' && top == '{') ||
-                   (ch == ']' && top == '[')) {
-                    // If it matches, pop the top element from the stack
-                    s1.pop();
-                } else {
-                    // If it doesn't match, it means the brackets are mismatched
-                    return false;
-                }
-            }
+    // Iterate through each character in the string
+    for(auto it: s) {
+        // If the character is an opening bracket, push it onto the stack
+        if(it == '(' || it == '{' || it == '[') 
+            st.push(it); 
+        else {
+            // If we encounter a closing bracket, check if the stack is empty
+            // If the stack is empty, there's no matching opening bracket, so return false
+            if(st.size() == 0) 
+                return false; 
+
+            // Get the top element of the stack (the most recent opening bracket)
+            char ch = st.top(); 
+            // Remove the top element from the stack
+            st.pop(); 
+
+            // Check if the current closing bracket matches the top opening bracket
+            // If it matches, continue to the next character
+            if((it == ')' and ch == '(') or  
+               (it == ']' and ch == '[') or 
+               (it == '}' and ch == '{')) 
+                continue;
+            else 
+                // If it doesn't match, the string is invalid
+                return false;
         }
-        
-        // After processing all characters, if the stack is empty, it means all brackets are matched correctly
-        return s1.empty();
     }
-};
+    
+    // After processing all characters, the stack should be empty if the string is valid
+    return st.empty(); 
+}
 
+};
