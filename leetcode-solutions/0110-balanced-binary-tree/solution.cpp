@@ -10,30 +10,27 @@
  * };
  */
 class Solution {
-public:
-    int Height(TreeNode* root) {
-        if(!root) return 0;
+public: // O(N) solution
+    pair<bool, int> isBalancedFast(TreeNode* root){  
+        //first-> isBalanced(true/false) ; second-> height
 
-        int LH = Height(root->left);
-        int RH = Height(root->right);
+        if(!root) return {true, 0};
 
-        return 1+max(LH, RH);
-    }        
+        pair<bool,int> leftAns = isBalancedFast(root->left);
+        pair<bool,int> rightAns = isBalancedFast(root->right);
+        bool diff = abs(leftAns.second - rightAns.second) <= 1;
 
-    bool isBalanced(TreeNode* root) {
-        if(!root) return true;
-
-        int LH = Height(root->left);
-        int RH = Height(root->right);
-
-        if(abs(RH-LH) > 1) return false;
-
-        bool left = isBalanced(root->left);
-        bool right = isBalanced(root->right);
-
-        if(left == false || right == false) return false;        
+        // build ans to return check, height
+        pair<bool,int> ans;
+        ans.second = max(leftAns.second, rightAns.second) +1; //stores height 
+        //stores bool check
+        if(leftAns.first == true && rightAns.first == true && diff == true) ans.first = true;
+        else ans.first = false;
         
-        return true;
+        return ans;
 
+    }
+    bool isBalanced(TreeNode* root) {
+        return isBalancedFast(root).first; //as first contains the result t/f
     }
 };
