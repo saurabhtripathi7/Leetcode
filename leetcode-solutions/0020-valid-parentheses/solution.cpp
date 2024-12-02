@@ -14,7 +14,6 @@ public:
             // If the stack is empty, there's no matching opening bracket, so return false
             if(st.size() == 0) 
                 return false; 
-
             // Get the top element of the stack (the most recent opening bracket)
             char ch = st.top(); 
             // Remove the top element from the stack
@@ -30,8 +29,7 @@ public:
                 // If it doesn't match, the string is invalid
                 return false;
         }
-    }
-    
+    }    
     // After processing all characters, the stack should be empty if the string is valid
     return st.empty(); 
 }
