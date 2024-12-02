@@ -14,7 +14,7 @@ public:
         for (int k : nums) {
             // Check if removing 'k' results in an even sum for the remaining elements
             if ((sum - k) % 2 == 0) {
-                st.erase(st.find(k));  // Remove one occurrence of 'k' from multiset
+                st.erase(st.find(k));  // Remove one occurrence of 'k' from multiset to avoid self matching
                 int p = (sum - k) / 2;  // Compute the value of p
     
                 // Check if p exists in the remaining elements of the multiset
