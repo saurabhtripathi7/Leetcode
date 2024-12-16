@@ -13,7 +13,7 @@ public:
                 if (color[nbr] == color[u]) {
                     return false; // Same color as parent, not bipartite
                 } else if (color[nbr] == -1) { // Not yet colored
-                    color[nbr] = 1 - color[u]; // Assign the opposite color
+                    color[nbr] = !color[u]; // Assign the opposite color
                     q.push(nbr);
                 }
             }
@@ -29,7 +29,7 @@ public:
         // Iterate over each node in the graph
         for (int i = 0; i < n; ++i) {
             if (color[i] == -1) { // If node is not colored yet
-                if (!checkBipartiteBFS(i, graph, color, 1)) {
+                if (!checkBipartiteBFS(i, graph, color, 0)) {
                     return false; // If any component is not bipartite
                 }
             }
