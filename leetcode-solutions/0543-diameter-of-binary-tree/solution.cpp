@@ -32,7 +32,7 @@ public:
 
         // The diameter at the current node is the maximum of the three options
         pair<int, int> ans;
-        ans.first = max(op1, max(op2, op3)); // Store the largest diameter
+        ans.first = max({op1, op2, op3}); // Store the largest diameter
 
         // Height of the current node is the max height of its subtrees plus one
         ans.second = max(left.second, right.second) + 1;
