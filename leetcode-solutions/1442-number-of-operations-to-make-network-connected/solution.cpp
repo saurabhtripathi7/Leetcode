@@ -1,40 +1,63 @@
-class Solution {
+class DSU {
 public:
-    void dfs(int node, vector<vector<int>>& adj, vector<int>& vis){
-        if(vis[node]) return;
+    vector<int> parent, rank;
 
-        vis[node] = 1;
-        
-        for(auto nbr : adj[node]){
-            if(!vis[nbr]){
-                dfs(nbr, adj, vis);
-            }
+    DSU(int V) {
+        parent.resize(V);
+        rank.resize(V, 0);
+        for (int i = 0; i < V; ++i) {
+            parent[i] = i;
         }
     }
-    int makeConnected(int n, vector<vector<int>>& connections) {
-        int rows = connections.size();
-        if(rows < n-1) return -1;
 
-        int col = connections[0].size();
+    int findParent(int x) {
+        if (x == parent[x]) return x;
+        return parent[x] = findParent(parent[x]);
+    }
 
-        vector<vector<int>> adj(n);
+    void unionByRank(int x, int y) {
+        int xParent = findParent(x);
+        int yParent = findParent(y);
 
-        for(auto edge: connections){
-            int u = edge[0];
-            int v = edge[1];
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+        if (xParent == yParent) return;
+
+        if (rank[xParent] > rank[yParent]) {
+            parent[yParent] = xParent;
         }
-
-        vector<int>vis(n ,0);
-        int cnt = 0;
-        for(int i = 0; i < n; ++i){
-            if(!vis[i]){
-                cnt++;
-                dfs(i, adj, vis);
+        else if (rank[xParent] < rank[yParent]) {
+            parent[xParent] = yParent;
+        }
+        else {
+            parent[xParent] = yParent;
+            rank[yParent]++;
+        }
+    }
+};
+class Solution {
+public:
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        DSU dsu(n);
+        int extraEdges = 0;
+        for(auto& e : connections){
+            int u = e[0], v = e[1];
+            if(dsu.findParent(u) == dsu.findParent(v)){
+                extraEdges++;
+            }
+            else{
+                dsu.unionByRank(u,v);
             }
         }
 
-        return cnt-1;
+        int cntCompo = 0;
+        for(int i = 0; i < n; ++i){
+            if(dsu.findParent(i) == i)
+            cntCompo++;
+        }
+
+        int ans = cntCompo - 1;
+
+        return extraEdges >= ans ? ans : -1;
+
+
     }
 };
