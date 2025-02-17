@@ -1,53 +1,81 @@
+class DSU {
+public:
+    vector<int> parent, rank, size;
+
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 1);
+        size.resize(n, 1);
+        for (int i = 0; i < n; ++i)
+            parent[i] = i;
+    }
+
+    int findParent(int i) {
+        if (parent[i] == i)
+            return i;
+        return parent[i] = findParent(parent[i]);
+    }
+
+    void unionBySize(int u, int v) {
+        int rootU = findParent(u);
+        int rootV = findParent(v);
+        if (rootU == rootV)
+            return;
+
+        if (size[rootU] < size[rootV]) {
+            parent[rootU] = rootV;
+            size[rootV] += size[rootU];
+        } else {
+            parent[rootV] = rootU;
+            size[rootU] += size[rootV];
+        }
+    }
+};
+
 class Solution {
 public:
-    int dfs(int r, int c, vector<vector<int>>& grid, vector<vector<bool>>& vis) {
-        // If the current cell is out of bounds or water (0) or already visited
-        if (r < 0 || r >= grid.size() || c < 0 || c >= grid[0].size() || grid[r][c] == 0 || vis[r][c]) {
-            return 0;
-        }
-        
-        // Mark the cell as visited
-        vis[r][c] = true;
-        
-        // Initialize the area of the current island to 1 (the current land cell)
-        int area = 1;
-
-        // Define the 4 possible directions (up, right, down, left)
-        int dr[] = {-1, 0, 1, 0};
-        int dc[] = {0, 1, 0, -1};
-        
-        // Explore all 4 directions
-        for (int i = 0; i < 4; ++i) {
-            int nr = r + dr[i];
-            int nc = c + dc[i];
-            area += dfs(nr, nc, grid, vis);  // Accumulate the area
-        }
-        
-        return area;
+    bool isValid(int r, int c, int n, int m) {
+        return r >= 0 && r < n && c >= 0 && c < m;
     }
 
     int maxAreaOfIsland(vector<vector<int>>& grid) {
-        int r = grid.size();
-        int c = grid[0].size();
-        
-        // Create a visited matrix to track which cells have been visited
-        vector<vector<bool>> vis(r, vector<bool>(c, false));
-        
-        int maxArea = 0;
-        
-        // Traverse all cells of the grid
-        for (int i = 0; i < r; ++i) {
-            for (int j = 0; j < c; ++j) {
-                // If the cell is land and hasn't been visited
-                if (grid[i][j] == 1 && !vis[i][j]) {
-                    // Start DFS to explore the island and calculate its area
-                    int area = dfs(i, j, grid, vis);
-                    maxArea = max(maxArea, area);  // Update max area if needed
+        int n = grid.size();
+        int m = grid[0].size();
+
+        DSU dsu(n * m);
+        int dr[] = {-1, 0, 1, 0};
+        int dc[] = {0, 1, 0, -1};
+
+        // Step 1: Apply Union-Find only on land cells (`1`s)
+        for (int row = 0; row < n; ++row) {
+            for (int col = 0; col < m; ++col) {
+                if (grid[row][col] == 1) {
+                    int currCell = row * m + col;
+                    for (int i = 0; i < 4; ++i) {
+                        int nr = row + dr[i];
+                        int nc = col + dc[i];
+
+                        if (isValid(nr, nc, n, m) && grid[nr][nc] == 1) {
+                            int adjCell = nr * m + nc;
+                            dsu.unionBySize(currCell, adjCell);
+                        }
+                    }
                 }
             }
         }
-        
-        return maxArea;  // Return the largest island area found
+
+        // Step 2: Find the largest island size
+        int maxi = 0;
+        for (int row = 0; row < n; ++row) {
+            for (int col = 0; col < m; ++col) {
+                if (grid[row][col] == 1) {
+                    int root = dsu.findParent(row * m + col);
+                    maxi = max(maxi, dsu.size[root]);  // Track max island size
+                }
+            }
+        }
+
+        return maxi;
     }
 };
 
