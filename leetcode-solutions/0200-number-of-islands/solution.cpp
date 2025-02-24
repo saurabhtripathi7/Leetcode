@@ -1,55 +1,85 @@
+class DSU {
+public:
+    vector<int> parent, rank;
+
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
+    }
+
+    int findParent(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = findParent(parent[x]);
+    }
+
+    void unionByRank(int x, int y) {
+        int rootX = findParent(x);
+        int rootY = findParent(y);
+        if (rootX == rootY) return;
+
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+    }
+};
+
 class Solution {
 public:
-    void bfs(int row, int col, vector<vector<int>>& vis, vector<vector<char>>& grid) {
-        int n = grid.size();
-        int m = grid[0].size();
-        queue<pair<int, int>> q;
-        q.push({row, col});
-        vis[row][col] = 1;
+    // Helper function to check if the neighbor is within bounds
+    bool isValid(int row, int col, int m, int n) {
+        return (row >= 0 && row < m && col >= 0 && col < n);
+    }
 
-        // Using nested loops to explore the four directions (up, down, left, right)
-        while (!q.empty()) {
-            int currRow = q.front().first;
-            int currCol = q.front().second;
-            q.pop();
+    int numIslands(vector<vector<char>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        DSU dsu(m * n);
 
-            // Explore all 8 possible directions (but skip diagonals later)
-            for (int dRow = -1; dRow <= 1; ++dRow) {
-                for (int dCol = -1; dCol <= 1; ++dCol) {
-                    // Skip diagonal directions (i.e., if abs(dRow) + abs(dCol) == 2)
-                    if (abs(dRow) + abs(dCol) == 2) continue;
+        // Helper function to convert 2D (i, j) to 1D index
+        auto getIndex = [&](int i, int j) {
+            return i * n + j;
+        };
 
-                    int nbrRow = currRow + dRow;
-                    int nbrCol = currCol + dCol;
+        // Direction vectors for 4 neighbors (up, down, left, right)
+        vector<int> delRow = {-1, 1, 0, 0};
+        vector<int> delCol = {0, 0, -1, 1};
 
-                    // Check bounds and visit only unvisited land cells
-                    if (nbrRow >= 0 && nbrRow < n && nbrCol >= 0 && nbrCol < m 
-                        && grid[nbrRow][nbrCol] == '1' && !vis[nbrRow][nbrCol]) {
-                        vis[nbrRow][nbrCol] = 1;
-                        q.push({nbrRow, nbrCol});
+        // Traverse the grid and connect adjacent lands
+        for (int row = 0; row < m; ++row) {
+            for (int col = 0; col < n; ++col) {
+                if (grid[row][col] == '1') {
+                    for (int i = 0; i < 4; ++i) {
+                        int nbrRow = row + delRow[i];
+                        int nbrCol = col + delCol[i];
+
+                        // Check if neighbor is valid and is land
+                        if (isValid(nbrRow, nbrCol, m, n) && grid[nbrRow][nbrCol] == '1') {
+                            dsu.unionByRank(getIndex(row, col), getIndex(nbrRow, nbrCol));
+                        }
                     }
                 }
             }
         }
-    }
 
-    int numIslands(vector<vector<char>>& grid) {
-        int n = grid.size();
-        int m = grid[0].size();
-        vector<vector<int>> vis(n, vector<int>(m, 0)); // Visited matrix
-        int cnt = 0;
-
-        // Iterate through every cell in the grid
-        for (int row = 0; row < n; ++row) {
-            for (int col = 0; col < m; ++col) {
-                if (!vis[row][col] && grid[row][col] == '1') { // Start BFS for new island
-                    cnt++;
-                    bfs(row, col, vis, grid);
+        // Use a set to find unique island roots
+        unordered_set<int> uniqueIslands;
+        for (int row = 0; row < m; ++row) {
+            for (int col = 0; col < n; ++col) {
+                if (grid[row][col] == '1') {
+                    uniqueIslands.insert(dsu.findParent(getIndex(row, col)));
                 }
             }
         }
 
-        return cnt;
+        return uniqueIslands.size();
     }
 };
 
