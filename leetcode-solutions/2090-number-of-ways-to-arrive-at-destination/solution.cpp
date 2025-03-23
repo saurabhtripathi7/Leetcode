@@ -1,5 +1,9 @@
 class Solution {
 public:
+    typedef pair<long long, long long> P;
+    // modified dijktra a little bit
+    // we take another vec called {ways} to store the number of ways to arrive at any Node in min time
+    // at the end we return ways[n-1] for the no of ways to arrive at Last Node with min cost
     int countPaths(int n, vector<vector<int>>& roads) {
         // Step 1: Build the adjacency list
         vector<vector<pair<long long, long long>>> adj(n);
@@ -9,9 +13,7 @@ public:
         }
 
         // Step 2: Initialize the priority queue, distance array, and ways array
-        priority_queue<pair<long long, long long>, 
-                       vector<pair<long long, long long>>, 
-                       greater<pair<long long, long long>>> pq;
+        priority_queue<P, vector<P>, greater<P>> pq;
         pq.push({0, 0}); // {dist, node}
 
         vector<long long> dist(n, LLONG_MAX);
