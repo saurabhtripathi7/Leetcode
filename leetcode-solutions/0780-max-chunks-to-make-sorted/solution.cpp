@@ -1,12 +1,13 @@
 class Solution {
 public:
     int maxChunksToSorted(vector<int>& arr) {
-        int runningSum = 0, expectedSum = 0, chunks = 0;
-        for (int i = 0; i < arr.size(); i++) {
-            runningSum += arr[i];
-            expectedSum += i;
-            if (runningSum == expectedSum) chunks++;
+        int maxImpact = -1;
+        int count = 0;
+        
+        for(int i = 0; i < arr.size(); ++i){
+            maxImpact = max(maxImpact, arr[i]);
+            if(maxImpact == i) count++;
         }
-        return chunks;
+        return count;
     }
 };
