@@ -1,35 +1,29 @@
 class Solution {
 public:
-    // Recursive function to find all combinations that sum to the target
     void findCombination(int ind, int target, vector<int>& arr, vector<vector<int>>& ans, vector<int>& ds) {
-        // Base case: if we have considered all elements
-        if (ind == arr.size()) {
-            // If the target is reduced to zero, we found a valid combination
-            if (target == 0) {
-                ans.push_back(ds); // Add the current combination (ds) to the result
-            }
-            return; // Exit the function as no more elements are left to consider
+        if (target == 0) { //base
+            ans.push_back(ds);
+            return;
+        }
+        if (ind >= arr.size() || target < 0) { // base case
+            return;
         }
 
-        // Option 1: Include the current element if it's less than or equal to the target
+        // pick the curr element
         if (arr[ind] <= target) {
-            ds.push_back(arr[ind]); // Add the current element to the combination
-            // Recur with the same index (ind) to allow using the same element again
+            ds.push_back(arr[ind]);
             findCombination(ind, target - arr[ind], arr, ans, ds);
-            ds.pop_back(); // Backtrack: remove the last added element to try the next possibility
+            ds.pop_back();
         }
 
-        // Option 2: Exclude the current element and move to the next index
-        findCombination(ind + 1, target, arr, ans, ds); // Recur with the next index
+        // not picking the current element
+        findCombination(ind + 1, target, arr, ans, ds);
     }
-    
-    // Main function to initiate the combination finding process
+
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> ans; // To store all the valid combinations found
-        vector<int> ds; // To store a single combination being constructed
-        // Start the recursive search from index 0 and the given target
+        vector<vector<int>> ans;
+        vector<int> ds;
         findCombination(0, target, candidates, ans, ds);
-        return ans; // Return the list of all combinations found
+        return ans;
     }
 };
-
