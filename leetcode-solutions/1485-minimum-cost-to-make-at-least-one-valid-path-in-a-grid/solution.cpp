@@ -1,49 +1,44 @@
-const int di[4] = {0, 0, 1, -1};
-const int dj[4] = {1, -1, 0, 0};
 class Solution {
 public:
-    static inline bool isOutside(int i, int j, int r, int c) {
-        return i < 0 || i >= r || j < 0 || j >= c;
-    }
-    static inline unsigned pack(unsigned d, unsigned i, unsigned j) {
-        return (d << 16) + (i << 8) + j;
-    }
-    static inline array<int, 3> unpack(unsigned info) {
-        array<int, 3> ans;
-        ans[0] = info >> 16, ans[1] = (info >> 8) & 255, ans[2] = info & 255;
-        return ans;
-    }
-    static unsigned int idx(int i, int j, int c) { return i * c + j; }
+    vector<vector<int>> dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
-    static int minCost(vector<vector<int>>& grid) {
-        const int r = grid.size(), c = grid[0].size();
-        priority_queue<unsigned, vector<unsigned>, greater<>> pq;
-        unsigned* dist = (unsigned*)alloca(r * c * sizeof(unsigned));
-        bitset<10000> viz = 0;
-        fill(dist, dist + r * c, UINT_MAX);
-        pq.push(pack(0, 0, 0));
-        dist[0] = 0;
-        viz[0] = 1;
+    int minCost(vector<vector<int>>& grid) {
+        int numRows = grid.size(), numCols = grid[0].size();
+
+        //{cost, row, col}
+        priority_queue<vector<int>, vector<vector<int>>, greater<>> pq;
+        pq.push({0, 0, 0});
+
+        // Tracks minimum cost to reach each cell
+        vector<vector<int>> minCost(numRows, vector<int>(numCols, INT_MAX));
+        minCost[0][0] = 0;
+
         while (!pq.empty()) {
-            auto info = pq.top();
+            auto curr = pq.top();
             pq.pop();
-            auto [d, i, j] = unpack(info);
-            viz[idx(i, j, c)] = 1;
-            if (i == r - 1 && j == c - 1)
-                return d;
-            int x = grid[i][j];
-            for (int a = 0; a < 4; a++) {
-                int s = i + di[a], t = j + dj[a];
-                if (isOutside(s, t, r, c) || viz[idx(s, t, c)])
-                    continue;
-                int new_d = d + 1 - (a + 1 == x);
-                int b = idx(s, t, c);
-                if (new_d < dist[b]) {
-                    dist[b] = new_d;
-                    pq.push(pack(new_d, s, t));
+            int cost = curr[0], row = curr[1], col = curr[2];
+
+            // Skip if we've found a better path to this cell
+            if (minCost[row][col] != cost) continue;
+
+            for (int dir = 0; dir < 4; dir++) {
+                int newRow = row + dirs[dir][0];
+                int newCol = col + dirs[dir][1];
+
+                if (newRow >= 0 && newRow < numRows && newCol >= 0 &&
+                    newCol < numCols) {
+                    // Add cost=1 if we need to change direction
+                    int newCost = cost + (dir != (grid[row][col] - 1) ? 1 : 0);
+
+                    // Update if we found a better path
+                    if (minCost[newRow][newCol] > newCost) {
+                        minCost[newRow][newCol] = newCost;
+                        pq.push({newCost, newRow, newCol});
+                    }
                 }
             }
         }
-        return INT_MAX;
+
+        return minCost[numRows - 1][numCols - 1];
     }
 };
