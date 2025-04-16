@@ -1,16 +1,38 @@
 class Solution {
 public:
-    int solve(int m, int n, int i, int j, vector<vector<int>>&dp) {
-        if(i >= m || j >= n) return 0;                                    // reached out of bounds - invalid
-        if(i == m-1 && j == n-1) return 1;                                // reached the destination - valid solution
-        if(dp[i][j] != -1) return dp[i][j];
+    /*
+    Space Optimization (2D --> 1D):
+    NOTE: If ans of current state depend of prev few states(here 2, up and
+    left), then we can Space Opt tabulation
 
-        return dp[i][j] = solve(m, n, i+1, j, dp) + solve(m, n, i, j+1, dp);     // try both down and right
-    }
+    Answer of current state depend on left and up block, dp[i][j] = dp[i-1][j] +
+    dp[i][j-1] If we take a prev[n] = {all 0} and take a temp[n] for computing
+    temp[j] =  temp[j-1] (left) + prev[j] (up)
 
-    int uniquePaths(int m, int n, int i = 0, int j = 0) {
-        vector<vector<int>>dp(m, vector<int>(n, -1));
-        if(m == 1 & n == 1) return 1;
-        return solve(m, n, i+1, j, dp) + solve(m, n, i, j+1, dp);     // try both down and right
+    */
+    int uniquePaths(int m, int n) {
+        vector<int> prev(n, 0); // take a dummy top col with all 0 init
+        for (int i = 0; i < m; ++i) {
+            vector<int> curr(n, 0);
+            for (int j = 0; j < n; ++j) {
+                if(i == 0 && j == 0) {
+                    curr[j] = 1;
+                    continue;
+                }
+                int up = (i > 0) ? prev[j] : 0;
+                int left = (j > 0) ? curr[j-1] : 0;
+                curr[j] = up + left;
+            }
+            prev = curr;
+        }
+        return prev[n - 1];
     }
 };
+/*
+TABULATION Steps:
+1. Fill table with base cases
+2. Express all rec states as for loops (if 2 variables change, use 2 nested for
+loops)
+3. Copy recurrence and write
+here, i -- > m-1 and j -- > n-1
+*/
