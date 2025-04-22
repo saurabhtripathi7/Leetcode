@@ -1,24 +1,17 @@
 class Solution {
 public:
-        int solve(vector<int>& nums, int size, int index, vector<int>&dp) {
-        //base case
-        if(index >= size ) {
-            return 0;
-        }
-        if(dp[index] != -1) return dp[index];
-
-        //rob the ith house and dont go to adj house (pick)
-        int option1 = nums[index] + solve(nums, size, index+2, dp);
-
-        //dont rob ith curr house but go for adj house (not pick)
-        int option2 = 0 + solve(nums, size, index+1, dp);
-
-        return dp[index] = max(option1, option2);
-    }
+    // Tabulation
     int rob(vector<int>& nums) {
-        int size = nums.size();
-        int index = 0;
-        vector<int>dp(size+1, -1);
-        return solve(nums, size, index, dp);
+        int n = nums.size();
+        int prev1 = nums[0];
+        int prev2 = 0;
+        for(int i = 1; i < n; ++i){
+            int pick = nums[i] + prev2;
+            int skip = prev1;
+            int currMaxSum = max(pick, skip);
+            prev2 = prev1;
+            prev1 = currMaxSum;
+        }
+        return prev1;
     }
 };
