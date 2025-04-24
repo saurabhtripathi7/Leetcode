@@ -8,61 +8,35 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
- int init = [] {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    ofstream out("user.out");
-    for (string s; getline(cin, s);)
-        out << (equal(s.begin() + 1, s.begin() + s.size() / 2, s.rbegin() + 1)
-                    ? "true\n"
-                    : "false\n");
-    out.flush();
-    exit(0);
-
-    return 0;
-}();
 class Solution {
-private: 
-    ListNode* reverse(ListNode* head){
-        ListNode* prev = NULL;
+public:
+    ListNode* reverse(ListNode* head) {
+        ListNode* prev = nullptr;
         ListNode* curr = head;
-        ListNode* next = NULL;
-        while(curr){
-            next = curr->next;
+        while (curr != nullptr) {
+            ListNode* next = curr->next;
             curr->next = prev;
             prev = curr;
             curr = next;
         }
         return prev;
     }
-public:
+    
     bool isPalindrome(ListNode* head) {
-        if(head == NULL || head->next == NULL){
-            return true;
-        }
-        
         ListNode* slow = head;
         ListNode* fast = head;
-
-        while(fast->next && fast->next->next){
+        while (fast != nullptr && fast->next != nullptr) {
             slow = slow->next;
             fast = fast->next->next;
         }
-
-        ListNode* newHead = reverse(slow->next);
-
-        ListNode* first = head;
-        ListNode* second = newHead;
-
-        while(second){
-            if(first->val != second->val){
-                reverse(newHead);
+        ListNode* rev = reverse(slow);
+        while (rev != nullptr) {
+            if (head->val != rev->val) {
                 return false;
             }
-            first = first->next;
-            second = second->next;
+            head = head->next;
+            rev = rev->next;
         }
-        reverse(newHead);
-        return true;  
+        return true;
     }
 };
