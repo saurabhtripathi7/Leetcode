@@ -1,19 +1,18 @@
 class Solution {
 public:
-    int findDuplicate(vector<int>& nums)
-    {
-        // 2 pointer approach
-        
-        sort(nums.begin(), nums.end());
-        int i = 0;
-        int j = i + 1;
-        while(i < nums.size())
-        {
-            if(nums[i] == nums[j]) return nums[i];
-            i++;
-            j++;
-        }
-        return 0;
+    int findDuplicate(vector<int>& nums) {
+        int slow = nums[0], fast = nums[0];
+        do{
+            slow = nums[slow];
+            fast = nums[nums[fast]];
+        }while(slow != fast);
 
+        //from entrace cover the length of the loop
+        slow = nums[0];
+        while(slow != fast){
+            slow = nums[slow];
+            fast = nums[fast];
+        }
+        return slow;
     }
 };
