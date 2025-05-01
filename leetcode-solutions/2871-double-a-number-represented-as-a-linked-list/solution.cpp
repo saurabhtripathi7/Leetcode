@@ -1,35 +1,34 @@
 class Solution {
 public:
-    ListNode* doubleIt(ListNode* head) {
-        head = reverse(head);
-        ListNode* res = new ListNode();
-        ListNode* pointer = res;
-        int carr = 0;
-        while(head) {
-            int currentVal = (head->val*2 + carr)%10;
-            carr = (head->val*2 + carr)/10;
-            ListNode* temp = new ListNode(currentVal);
-            pointer->next = temp;
-            pointer = pointer->next;
-            head=head->next;
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = nullptr;
+        while (head) {
+            ListNode* next = head->next;
+            head->next = prev;
+            prev = head;
+            head = next;
         }
-        if(carr==1) {
-            ListNode* temp = new ListNode(1);
-            pointer->next = temp;
-        }
-        res = res->next;
-        return reverse(res);
+        return prev;
     }
 
-        ListNode* reverse(ListNode* head) {
-        ListNode *prev=NULL,*curr=head,*nxt=NULL;
-        while(curr)
-        {
-            nxt=curr->next;
-            curr->next=prev;
-            prev=curr;
-            curr=nxt;
+    ListNode* doubleIt(ListNode* head) {
+        head = reverseList(head);
+        ListNode* curr = head;
+        ListNode* tail = nullptr;
+        int carry = 0;
+
+        while (curr) {
+            int val = curr->val * 2 + carry;
+            curr->val = val % 10;
+            carry = val / 10;
+            tail = curr;
+            curr = curr->next;
         }
-        return head=prev;
+
+        if (carry) {
+            tail->next = new ListNode(carry);
+        }
+
+        return reverseList(head);
     }
 };
