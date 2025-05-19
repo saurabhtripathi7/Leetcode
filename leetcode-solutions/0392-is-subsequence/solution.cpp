@@ -1,0 +1,30 @@
+class Solution {
+public:
+    int LCS(string text1, string text2) {
+        int n = text1.length();
+        int m = text2.length();
+
+        vector<int> prev(m+1, 0), curr(m+1, 0);
+
+        for(int i = 1; i <= n; i++) {
+            for(int j = 1; j <= m; j++) {
+                if(text1[i-1] == text2[j-1])
+                    curr[j] = 1 + prev[j-1];
+                else
+                    curr[j] = max(prev[j], curr[j-1]); 
+            }
+            prev = curr;
+        }
+
+        return prev[m];
+    }
+    bool isSubsequence(string s, string t) {
+        int n = s.length();
+        int m = t.length();
+
+        int lcsLength = LCS(s, t);
+        if(lcsLength == n) return true;
+        return false;
+
+    }
+};
