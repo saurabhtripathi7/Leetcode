@@ -9,7 +9,7 @@ public:
                 total -= nums[i];
                 i++;
             }
-            res += j - i + 1;
+            res += j - i + 1; //all valid subarrays ending at j
         }
         return res;
     }
