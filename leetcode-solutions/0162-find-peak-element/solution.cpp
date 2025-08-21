@@ -8,7 +8,7 @@ public:
 
        int s = 1 ;
        int e = n-2;
-
+                            
        while(s<=e)
        {
             int mid = s + (e-s)/2;
