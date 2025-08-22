@@ -7,13 +7,10 @@ public:
     
     vector<int> count(256, 0); 
 
-    for (char c : s) {
-        count[c]++;
-    }
-    
-    for (char c : t) {
-        count[c]--;
-    }
+    for(int i=0; i<s.length(); i++){
+            count[s[i]]++;
+            count[t[i]]--;
+        }
     
     for (int i : count) {
         if (i != 0) {
