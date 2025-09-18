@@ -1,43 +1,50 @@
 class TaskManager {
-    unordered_map<int, pair<int, int>> taskMap; // taskId -> (userId, priority)
-    priority_queue<tuple<int, int, int>> maxHeap; // (priority, taskId, userId)
-
 public:
+    unordered_map<int,int>taskId_userId;
+    unordered_map<int,int>taskId_priority;
+    priority_queue<pair<int,int>>priority_taskId;
     TaskManager(vector<vector<int>>& tasks) {
-        for (auto& task : tasks) {
-            int userId = task[0], taskId = task[1], priority = task[2];
-            taskMap[taskId] = {userId, priority};
-            maxHeap.push({priority, taskId, userId});
+        for(int i = 0;i<tasks.size();i++){
+            add(tasks[i][0],tasks[i][1],tasks[i][2]);
         }
     }
-
+    
     void add(int userId, int taskId, int priority) {
-        taskMap[taskId] = {userId, priority};
-        maxHeap.push({priority, taskId, userId});
+        priority_taskId.push({priority,taskId});
+        taskId_userId[taskId] = userId;
+        taskId_priority[taskId]  = priority;
     }
-
+    
     void edit(int taskId, int newPriority) {
-        if (taskMap.find(taskId) != taskMap.end()) {
-            int userId = taskMap[taskId].first;
-            taskMap[taskId].second = newPriority;
-            maxHeap.push({newPriority, taskId, userId});
-        }
-    }
+        taskId_priority[taskId] = newPriority;
+        priority_taskId.push({newPriority,taskId});
 
+    }
+    
     void rmv(int taskId) {
-        taskMap.erase(taskId);
+        taskId_priority[taskId] = -1;
     }
-
+    
     int execTop() {
-        while (!maxHeap.empty()) {
-            auto [priority, taskId, userId] = maxHeap.top();
-            maxHeap.pop();
-            if (taskMap.find(taskId) != taskMap.end() && taskMap[taskId].second == priority) {
-                taskMap.erase(taskId);
-                return userId;
+        while(!priority_taskId.empty()){
+            auto[priority,taskId] = priority_taskId.top();
+            priority_taskId.pop();
+
+            if(priority==taskId_priority[taskId])
+            {
+                taskId_priority[taskId] = -1;
+                return taskId_userId[taskId];
             }
         }
         return -1;
     }
 };
 
+/**
+ * Your TaskManager object will be instantiated and called as such:
+ * TaskManager* obj = new TaskManager(tasks);
+ * obj->add(userId,taskId,priority);
+ * obj->edit(taskId,newPriority);
+ * obj->rmv(taskId);
+ * int param_4 = obj->execTop();
+ */
