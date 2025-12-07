@@ -3,9 +3,8 @@ name: Sync Leetcode
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * 6"     # weekly; change if you want
+    - cron: "0 * * * *"   # hourly
 
-# Give the action permission to push commits
 permissions:
   contents: write
 
