@@ -3,7 +3,6 @@ public:
     int countCoveredBuildings(int n, vector<vector<int>>& buildings) {
         unordered_map<int, int> minY, maxY, minX, maxX;
 
-        // Initialize with extreme values
         for (auto& b : buildings) {
             int x = b[0], y = b[1];
             if (!minY.count(x)) minY[x] = INT_MAX;
