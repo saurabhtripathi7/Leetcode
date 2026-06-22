@@ -1,20 +1,22 @@
 class Solution {
 public:
-    int lengthOfLIS(vector<int>& nums) {
-        // Patience Sorting
-        int n = nums.size();
-        vector<int>sorted;
+    int n;
+    int solve(int idx, int prev, vector<vector<int>>& dp, vector<int>& nums){
+        if(idx == n) return 0;
 
-        for(int i = 0; i < n; ++i){
-            auto it = lower_bound(sorted.begin(), sorted.end(), nums[i]); // just greater or equal element
+        if(dp[idx][prev+1] != -1) return dp[idx][prev+1];
 
-            if(it == sorted.end()){ // if not found
-                sorted.push_back(nums[i]); // insert curr
-            }
-            else{ // if found
-                *it = nums[i]; // replace it with found
-            }
+        int skip = solve(idx+1, prev, dp, nums);
+        int pick = 0;
+        if (prev == -1 || nums[idx] > nums[prev]) {
+            pick = 1 + solve(idx+1, idx, dp, nums);
         }
-        return sorted.size();
+        return dp[idx][prev+1] = max(pick, skip);
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        n = nums.size();
+        vector<vector<int>>dp(n+1, vector<int>(n+1, -1));
+
+        return solve(0, -1, dp, nums);
     }
 };
