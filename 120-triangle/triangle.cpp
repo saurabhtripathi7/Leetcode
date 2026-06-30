@@ -1,20 +1,24 @@
 class Solution {
-public: 
-    int n;
-    int solve(int i, int j, vector<vector<int>>& dp, vector<vector<int>>& grid){
-        if(i >= n || j >= grid[i].size()) return 1e9;
-        if(i == n-1) return grid[i][j];
-
-        if(dp[i][j] != INT_MAX) return dp[i][j];
-
-        int first = solve(i+1, j, dp, grid);
-        int second = solve(i+1, j+1, dp, grid);
-
-        return dp[i][j] = grid[i][j] + min(first, second);
-    }
+public:
     int minimumTotal(vector<vector<int>>& triangle) {
-        n = triangle.size();
-        vector<vector<int>>dp(n, vector<int>(n, INT_MAX)); // -1 is a valid state, so cant take it
-        return solve(0, 0, dp, triangle);
+        // tabulation from last row to first cell
+        int n = triangle.size();
+        int lastRowSize = triangle[n-1].size();
+        vector<int>prev(lastRowSize);
+        // copy Last Row (n-1)th in Prev
+        for(int i = 0; i < lastRowSize; ++i){
+            prev[i] = triangle[n-1][i];
+        }
+
+        for(int i = n-2; i >= 0; --i){
+            vector<int>curr(triangle[i].size(), 0);
+            for(int j = 0; j < triangle[i].size(); ++j){
+                int first = prev[j];
+                int second = prev[j+1];
+                curr[j] = triangle[i][j] + min(first, second);
+            }
+            prev = curr;
+        }
+        return prev[0];        
     }
 };
