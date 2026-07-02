@@ -22,7 +22,20 @@ public:
         if(total & 1) return false;
 
         int target = total/2;
-        vector<vector<int>>dp(n, vector<int>(target+1, -1)); // true, false and -1 for unvis state
-        return solve(0, 0, nums, target, dp);  
+        vector<vector<bool>>dp(n+1, vector<bool>(target+1, false)); // n+1 bcz of base case check at i == n
+
+        dp[n][target] = true;
+
+        for(int i = n-1; i >= 0; --i){
+            for(int currSum = 0; currSum <= target; ++currSum){
+                int skip = dp[i+1][currSum];
+                int pick = false;
+                if(currSum + nums[i] <= target) 
+                    pick = dp[i+1][currSum + nums[i]];
+                dp[i][currSum] = skip || pick;
+            }
+        }
+
+        return dp[0][0];  
     }
 };
