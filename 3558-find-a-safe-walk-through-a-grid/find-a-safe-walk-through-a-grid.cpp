@@ -25,7 +25,7 @@ public:
 
                 if(nr < 0 || nc < 0 || nr >= m || nc >= n) continue;
 
-                int cost = dist[r][c] + grid[nr][nc];
+                int cost = dist[r][c] + grid[nr][nc]; // cost to reach new cell = cost of reaching curr cell + new cell's value
                 if(cost >= health) continue; // prune invalid states
 
                 if(cost < dist[nr][nc]){
