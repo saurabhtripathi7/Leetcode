@@ -1,18 +1,15 @@
 class Solution {
 public:
     string smallestPalindrome(string s) {
-        map<char, int>freq;
-        for(auto &c: s) freq[c]++;
-        string left = "";
-        char midOddCh = '\0';
-        
-        for(auto &[ch, cnt]: freq){
-            left += string(cnt/2, ch);
+        int len = s.length();
+        int partition = len / 2;
 
-            if(cnt%2 == 1 && midOddCh == '\0') midOddCh = ch;    
+        sort(s.begin(), s.begin() + partition);
+
+        for (int i = 0; i < partition; ++i) {
+            s[len - 1 - i] = s[i];
         }
-        string right = left;
-        reverse(right.begin(), right.end());
-        return left + (midOddCh == '\0' ? "" : string(1, midOddCh)) + right;
+
+        return s;
     }
 };
