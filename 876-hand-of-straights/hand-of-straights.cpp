@@ -8,13 +8,15 @@ public:
         for(int i = 0; i < n; ++i) freq[hand[i]]++;
 
         while(!freq.empty()){
-            int start = freq.begin()->first;
+            int currentCard = freq.begin()->first;
+            // Check each consecutive sequence of groupSize cards
+            for (int i = 0; i < groupSize; i++) {
+                // If a card is missing or has exhausted its occurrences
+                if (freq[currentCard + i] == 0) return false;
 
-            for(int x = start; x < start + groupSize; ++x){
-                if(freq.find(x) == freq.end()) return false;
-
-                freq[x]--;
-                if(freq[x] == 0) freq.erase(x);
+                freq[currentCard + i]--;
+                // Remove the card value if its occurrences are exhausted
+                if (freq[currentCard + i] < 1) freq.erase(currentCard + i);
             }
         }
         return true;
