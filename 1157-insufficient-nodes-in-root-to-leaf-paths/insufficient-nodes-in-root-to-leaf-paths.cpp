@@ -1,37 +1,19 @@
 class Solution {
 public:
-    int solve(TreeNode* node, int limit, int currSum) {
-        if (node == NULL) {
-            return INT_MIN;
-        }
-        currSum += node->val;
+    TreeNode* helper(TreeNode* root, int limit, int sum = 0){
+        if(!root) return NULL;
 
-        // Leaf
-        if (node->left == NULL && node->right == NULL) {
-            return currSum < limit ? INT_MIN : node->val;
+        if(!root -> left && !root -> right){
+            return root -> val + sum < limit ? NULL : root;
         }
 
-        int left = solve(node->left, limit, currSum);
-        int right = solve(node->right, limit, currSum);
+        root->left = helper(root->left, limit, sum + root->val);
+        root->right = helper(root->right, limit, sum + root->val);
 
-        // Remove insufficient subtrees
-        if (left == INT_MIN) {
-            node->left = NULL;
-        }
-        if (right == INT_MIN) {
-            node->right = NULL;
-        }
-        // Both subtrees insufficient
-        if (left == INT_MIN && right == INT_MIN) {
-            return INT_MIN;
-        }
-        // At least one sufficient path exists
-        return node->val;
+        return (!root->left && !root->right) ? NULL : root;
     }
+    
     TreeNode* sufficientSubset(TreeNode* root, int limit) {
-        if (solve(root, limit, 0) == INT_MIN) {
-            return NULL;
-        }
-        return root;
+        return helper(root, limit, 0);
     }
 };
